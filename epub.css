@@ -39,7 +39,7 @@
   font-weight: lighter;
   src:url("Oswald-Light.ttf");
 }
-
+a {text-decoration:none;}
 body {
   margin: 1%;
   text-align: justify;
@@ -47,7 +47,18 @@ body {
   font-family: OpenSans;
   line-height: 1.75;
 }
-code { font-family: monospace; }
+code {
+font-family: monospace;
+background-color:#eee;
+padding:1%;
+ }
+ pre {
+ background-color:#eee;
+padding:1%;
+white-space: pre-wrap;
+    word-break: break-word;
+    word-wrap: break-word;
+ }
 h1 { text-align: left; color: #333; }
 h2 { text-align: left; color: #555; }
 h3 { text-align: left; }
@@ -62,3 +73,9 @@ h2.author { }
 h3.date { }
 ol.toc { padding: 0; margin-left: 1em; }
 ol.toc li { list-style-type: none; margin: 0; padding: 0; }
+.figure img {
+    max-width:100%;
+    height:auto;
+}
+.figure {background-color:#eee;width:90%;margin:0 auto;}
+.caption {color:red;padding:10px;font-style:italic;}

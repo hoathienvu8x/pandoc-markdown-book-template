@@ -26,5 +26,7 @@ brew install pandoc
 3. Create your book with the following syntax:
 ```bash
 pandoc -S --toc --epub-embed-font='fonts/*.ttf' -o book.epub metadata.txt contents.markdown
+pandoc -S --toc --epub-embed-font='fonts/*.ttf' --from "markdown+implicit_figures" -o book.epub metadata.txt contents.markdown
 ```
+[#issuecomment-392534389](https://github.com/jgm/pandoc/issues/4677#issuecomment-392534389)
 Your book will be exported as `book.epub`.
