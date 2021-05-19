@@ -1,0 +1,663 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+<body id="cover">
+<div id="cover-image">
+<img src="media/fixed-corners.png" alt="cover image" />
+</div>
+</body>
+</html>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+<body>
+  <h1 class="main">Resizing and Cropping Images with Canvas</h1>
+  <p class="author">Mike Riethmuller</p>
+  <div class="rights">Commercial</div>
+</body>
+</html>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Resizing and Cropping Images with Canvas</title>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+<body>
+<div id="toc">
+  <h1 id="toc-title">Resizing and Cropping Images with Canvas</h1>
+  <ol class="toc">
+    <li id="toc-li-1">
+      <a href="ch001.xhtml#resizing-and-cropping-images-with-canvas">Resizing and Cropping Images with Canvas</a>
+      <ol class="toc">
+        <li id="toc-li-2">
+          <a href="ch001.xhtml#summary">Summary</a>
+        </li>
+        <li id="toc-li-3">
+          <a href="ch001.xhtml#the-markup">The Markup</a>
+        </li>
+        <li id="toc-li-4">
+          <a href="ch001.xhtml#the-css">The CSS</a>
+        </li>
+        <li id="toc-li-5">
+          <a href="ch001.xhtml#the-javascript">The JavaScript</a>
+        </li>
+        <li id="toc-li-6">
+          <a href="ch001.xhtml#actually-resizing-the-image">Actually resizing the image</a>
+        </li>
+        <li id="toc-li-7">
+          <a href="ch001.xhtml#resizing-from-different-corners">Resizing from different corners</a>
+        </li>
+        <li id="toc-li-8">
+          <a href="ch001.xhtml#moving-the-image">Moving the image</a>
+        </li>
+        <li id="toc-li-9">
+          <a href="ch001.xhtml#cropping-the-image">Cropping the image</a>
+        </li>
+        <li id="toc-li-10">
+          <a href="ch001.xhtml#adding-touch-events-and-gesture-detection">Adding touch events and gesture detection</a>
+        </li>
+      </ol>
+    </li>
+  </ol>
+</div>
+</body>
+</html>
+
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Resizing and Cropping Images with Canvas</title>
+  <link rel="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+<body>
+<div id="resizing-and-cropping-images-with-canvas" class="section level1 unnumbered">
+<h1>Resizing and Cropping Images with Canvas</h1>
+<div id="summary" class="section level2">
+<h2>Summary</h2>
+<p>Learn how to resize and crop images using JavaScript and the HTML5 Canvas element using controls, commonly seen in photo editing applications.</p>
+<div class="figure">
+<img src="media/file0.jpg" />
+
+</div>
+<p>In this tutorial we’re going to learn how to resize and crop an image using the HTML5 <code>&lt;canvas&gt;</code> element, and while we’re at it, let’s create some fancy controls for resizing, commonly seen in photo editing applications.</p>
+<p>In a real world example a website or app might use a technique like this to resize and frame a profile picture before uploading. Whilst we could do this on the server, it would require the transfer of a potentially large file, which is slow. Instead we can resize the image on the client side before uploading it, which is fast.</p>
+<p>We do this by creating an <strong>HTML5</strong> <code>&lt;canvas&gt;</code> element and drawing the image to the canvas at a particular size, then extracting the new image data from the canvas as a data URI. Most browsers have good support for these methods, so you can probably use this technique right now, however just be aware of some limitations unrelated to browser support such as quality and performance.</p>
+<p>Resizing very large images can cause the browser to slow down or in some cases, even crash. It makes sense to set reasonable limits on the file size just as you would when uploading a file. If quality is important you may find the resized image looks undesirable due to how the browser resampled it. There are some <a href="http://stackoverflow.com/questions/18922880/html5-canvas-resize-downscale-image-high-quality">techniques to improve the quality of images downscaled with canvas</a>, but they are not covered in this tutorial.</p>
+<p>Take a look at the final result in <a href="http://tympanus.net/Tutorials/ImageResizeCropCanvas/">this demo</a> or <a href="http://tympanus.net/Tutorials/ImageResizeCropCanvas/ImageResizeCropCanvas.zip">download the ZIP file</a>.</p>
+<p>With that in mind, let’s get started!</p>
+</div>
+<div id="the-markup" class="section level2">
+<h2>The Markup</h2>
+<p>In our demo we’re going to start with an existing image:</p>
+<pre><code>&lt;img class=&quot;resize-image&quot; src=&quot;image.jpg&quot; alt=&quot;Image&quot; /&gt;</code></pre>
+<p>That’s it! That’s all the HTML we need for this demo.</p>
+</div>
+<div id="the-css" class="section level2">
+<h2>The CSS</h2>
+<p>The CSS is also very minimal. First, define the styles for the resize-container and the image.</p>
+<pre><code>.resize-container {
+    position: relative;
+    display: inline-block;
+    cursor: move;
+    margin: 0 auto;
+}
+
+.resize-container img {
+    display: block
+}
+
+.resize-container:hover img,
+.resize-container:active img {
+    outline: 2px dashed rgba(222,60,80,.9);
+}</code></pre>
+<p>Next, define the position and style for each of the ‘resize handles’. These are the little squares at each corner of the image that we drag to resize.</p>
+<pre><code>.resize-handle-ne,
+.resize-handle-ne,
+.resize-handle-se,
+.resize-handle-nw,
+.resize-handle-sw {
+    position: absolute;
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: rgba(222,60,80,.9);
+    z-index: 999;
+}
+
+.resize-handle-nw {
+    top: -5px;
+    left: -5px;
+    cursor: nw-resize;
+}
+
+.resize-handle-sw {
+    bottom: -5px;
+    left: -5px;
+    cursor: sw-resize;
+}
+
+.resize-handle-ne {
+    top: -5px;
+    right: -5px;
+    cursor: ne-resize;
+}
+
+.resize-handle-se {
+    bottom: -5px;
+    right: -5px;
+    cursor: se-resize;
+}</code></pre>
+</div>
+<div id="the-javascript" class="section level2">
+<h2>The JavaScript</h2>
+<p>With the JavaScript start by defining some of the variables and initializing the Canvas and the target image.</p>
+<pre><code>var resizeableImage = function(image_target) {
+    var $container,
+    orig_src = new Image(),
+    image_target = $(image_target).get(0),
+    event_state = {},
+    constrain = false,
+    min_width = 60,
+    min_height = 60,
+    max_width = 800,
+    max_height = 900,
+    resize_canvas = document.createElement(&#39;canvas&#39;);
+});
+
+resizeableImage($(&#39;.resize-image&#39;));</code></pre>
+<p>Next, we create the <code>init</code> function that will be called immediately. This function wraps the image with a container, creates resize handles and makes a copy of the original image used for resizing. We also assign the jQuery object for the container element to a variable so we can refer to it later and add a <code>mousedown</code> event listener to detect when someone begins dragging one of the handles.</p>
+<pre><code>var resizeableImage = function(image_target) {
+
+// ...
+    init = function(){
+
+        // Create a new image with a copy of the original src
+        // When resizing, we will always use this original copy as the base
+        orig_src.src=image_target.src;
+
+        // Add resize handles
+        $(image_target).wrap(&#39;&lt;div class=&quot;resize-container&quot;&gt;&lt;/div&gt;&#39;)
+        .before(&#39;&lt;span class=&quot;resize-handle resize-handle-nw&quot;&gt;&lt;/span&gt;&#39;)
+        .before(&#39;&lt;span class=&quot;resize-handle resize-handle-ne&quot;&gt;&lt;/span&gt;&#39;)
+        .after(&#39;&lt;span class=&quot;resize-handle resize-handle-se&quot;&gt;&lt;/span&gt;&#39;)
+        .after(&#39;&lt;span class=&quot;resize-handle resize-handle-sw&quot;&gt;&lt;/span&gt;&#39;);
+
+        // Get a variable for the container
+        $container =  $(image_target).parent(&#39;.resize-container&#39;);
+
+        // Add events
+        $container.on(&#39;mousedown&#39;, &#39;.resize-handle&#39;, startResize);
+    };
+
+//...
+
+    init();
+}</code></pre>
+<p>The <code>startResize</code> and <code>endResize</code> functions do very little other than tell the browser to start paying attention to where the mouse is moving and when to stop paying attention.</p>
+<pre><code>startResize = function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    saveEventState(e);
+    $(document).on(&#39;mousemove&#39;, resizing);
+    $(document).on(&#39;mouseup&#39;, endResize);
+};
+
+endResize = function(e){
+    e.preventDefault();
+    $(document).off(&#39;mouseup touchend&#39;, endResize);
+    $(document).off(&#39;mousemove touchmove&#39;, resizing);
+};</code></pre>
+<p>Before we start tracking the mouse position we want to take a snapshot of the container dimensions and other key data points. We store these in a variable named <code>event_state</code> and use them later as a point of reference while resizing to work out the change in height and width.</p>
+<pre><code>saveEventState = function(e){
+  // Save the initial event details and container state
+  event_state.container_width = $container.width();
+  event_state.container_height = $container.height();
+  event_state.container_left = $container.offset().left; 
+  event_state.container_top = $container.offset().top;
+  event_state.mouse_x = (e.clientX || e.pageX || e.originalEvent.touches[0].clientX) + $(window).scrollLeft(); 
+  event_state.mouse_y = (e.clientY || e.pageY || e.originalEvent.touches[0].clientY) + $(window).scrollTop();
+
+  // This is a fix for mobile safari
+  // For some reason it does not allow a direct copy of the touches property
+  if(typeof e.originalEvent.touches !== &#39;undefined&#39;){
+    event_state.touches = [];
+    $.each(e.originalEvent.touches, function(i, ob){
+      event_state.touches[i] = {};
+      event_state.touches[i].clientX = 0+ob.clientX;
+      event_state.touches[i].clientY = 0+ob.clientY;
+    });
+  }
+  event_state.evnt = e;
+}</code></pre>
+<p>The <code>resizing</code> function is where most of the action happens. This function is constantly invoked while the user is dragging one of the resize handles. Every time this function is called we work out the new width and height by taking the current position of the mouse relative to the initial position of the corner we are dragging.</p>
+<pre><code>resizing = function(e){ 
+    var mouse={},width,height,left,top,offset=$container.offset();
+    mouse.x = (e.clientX || e.pageX || e.originalEvent.touches[0].clientX) + $(window).scrollLeft(); 
+    mouse.y = (e.clientY || e.pageY || e.originalEvent.touches[0].clientY) + $(window).scrollTop();
+
+    width = mouse.x - event_state.container_left;
+    height = mouse.y  - event_state.container_top;
+    left = event_state.container_left;
+    top = event_state.container_top;
+
+    if(constrain || e.shiftKey){
+        height = width / orig_src.width * orig_src.height;
+    }
+
+    if(width &gt; min_width &amp;&amp; height &gt; min_height &amp;&amp; width &lt; max_width &amp;&amp; height &lt; max_height){
+      resizeImage(width, height);  
+      // Without this Firefox will not re-calculate the the image dimensions until drag end
+      $container.offset({&#39;left&#39;: left, &#39;top&#39;: top});        
+    }
+}</code></pre>
+<p>Next we add the option to constrain the image dimensions when toggled using the shift key or a variable.</p>
+<p>Finally, we resize the image, but only if the new width and height are not outside the bounds of the min and max variables we initially set.</p>
+<blockquote>
+<p><strong>Note</strong>: Because we’re actually resizing the image and not just changing the height and width attributes, you might consider limiting how often <code>resizeImage</code> is called to improve performance. This is called debouncing or throttling.</p>
+</blockquote>
+</div>
+<div id="actually-resizing-the-image" class="section level2">
+<h2>Actually resizing the image</h2>
+<p>Drawing an image to the Canvas is as easy as <code>drawImage</code>. We set the height and width of the canvas first and always use the original copy of the full-sized image. We then use <code>toDataURL</code> on the Canvas to get a Base64-encoded version of the newly resized image and place this on the page.</p>
+<p>There is a full explanation for all the parameters that can be used with the <code>drawImage</code> method in the <a href="https://tympanus.net/codrops/2014/10/30/resizing-cropping-images-canvas/#heading-cropping">cropping section</a> of this tutorial.</p>
+<pre><code>resizeImage = function(width, height){
+    resize_canvas.width = width;
+    resize_canvas.height = height;
+    resize_canvas.getContext(&#39;2d&#39;).drawImage(orig_src, 0, 0, width, height);   
+    $(image_target).attr(&#39;src&#39;, resize_canvas.toDataURL(&quot;image/png&quot;));  
+};</code></pre>
+<p>Too simple? There is one small proviso: the image must be on the same domain as the page or on a server with <a href="http://en.wikipedia.org/wiki/Cross-origin_resource_sharing">cross-origin resource sharing (CORS)</a> enabled. If it’s not, you might run into problems with an error about a ‘tainted canvas’.</p>
+</div>
+<div id="resizing-from-different-corners" class="section level2">
+<h2>Resizing from different corners</h2>
+<p>You should now have a working demo. But it’s not complete. At the moment, no matter which corner of the image we resize, it behaves as though we are resizing it from the bottom right. We want to be able to resize the image from any corner. To do this we need to understand how it should behave.</p>
+<p>When resizing, the corner we’re dragging as well as its adjacent edges should move, while the corner directly opposite and its adjacent edges should remain fixed.</p>
+<div class="figure">
+<img src="media/file1.png" />
+
+</div>
+<p>When we change the width and height of an image, the right and bottom edges move, while the top and left edges will stay the same. This means that by default, an image is resized from its bottom right corner.</p>
+<p>We can’t change this default behavior, but when resizing from any corner other than the bottom right we can change the overall position of the image so that it appears as though the opposite corner and edges remain fixed. Let’s update our <code>resizing</code> function:</p>
+<pre><code>resizing = function(e){
+  var mouse={},width,height,left,top,offset=$container.offset();
+  mouse.x = (e.clientX || e.pageX || e.originalEvent.touches[0].clientX) + $(window).scrollLeft(); 
+  mouse.y = (e.clientY || e.pageY || e.originalEvent.touches[0].clientY) + $(window).scrollTop();
+  
+  // Position image differently depending on the corner dragged and constraints
+  if( $(event_state.evnt.target).hasClass(&#39;resize-handle-se&#39;) ){
+    width = mouse.x - event_state.container_left;
+    height = mouse.y  - event_state.container_top;
+    left = event_state.container_left;
+    top = event_state.container_top;
+  } else if($(event_state.evnt.target).hasClass(&#39;resize-handle-sw&#39;) ){
+    width = event_state.container_width - (mouse.x - event_state.container_left);
+    height = mouse.y  - event_state.container_top;
+    left = mouse.x;
+    top = event_state.container_top;
+  } else if($(event_state.evnt.target).hasClass(&#39;resize-handle-nw&#39;) ){
+    width = event_state.container_width - (mouse.x - event_state.container_left);
+    height = event_state.container_height - (mouse.y - event_state.container_top);
+    left = mouse.x;
+    top = mouse.y;
+    if(constrain || e.shiftKey){
+      top = mouse.y - ((width / orig_src.width * orig_src.height) - height);
+    }
+  } else if($(event_state.evnt.target).hasClass(&#39;resize-handle-ne&#39;) ){
+    width = mouse.x - event_state.container_left;
+    height = event_state.container_height - (mouse.y - event_state.container_top);
+    left = event_state.container_left;
+    top = mouse.y;
+    if(constrain || e.shiftKey){
+      top = mouse.y - ((width / orig_src.width * orig_src.height) - height);
+    }
+  }
+
+  // Optionally maintain aspect ratio
+  if(constrain || e.shiftKey){
+    height = width / orig_src.width * orig_src.height;
+  }
+
+  if(width &gt; min_width &amp;&amp; height &gt; min_height &amp;&amp; width &lt; max_width &amp;&amp; height &lt; max_height){
+    // To improve performance you might limit how often resizeImage() is called
+    resizeImage(width, height);  
+    // Without this Firefox will not re-calculate the the image dimensions until drag end
+    $container.offset({&#39;left&#39;: left, &#39;top&#39;: top});
+  }
+}</code></pre>
+<p>We are now checking to see which resize-handle has been dragged and we’re moving the image while resizing it so that it appears as though the correct corner remains fixed.</p>
+</div>
+<div id="moving-the-image" class="section level2">
+<h2>Moving the image</h2>
+<p>Now that we can resize the image from any of its corners you might have noticed we can inadvertently change its position on the page. We need to give users the ability to move the image back into the center of frame. In the <code>init</code> function let’s add another event listener similar to the one we did earlier.</p>
+<pre><code>init = function(){
+
+    //...
+
+    $container.on(&#39;mousedown&#39;, &#39;img&#39;, startMoving);
+}</code></pre>
+<p>We now add <code>startMoving</code> and <code>endMoving</code> functions similar to <code>startResize</code> and <code>endResize</code>.</p>
+<pre><code>startMoving = function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    saveEventState(e);
+    $(document).on(&#39;mousemove&#39;, moving);
+    $(document).on(&#39;mouseup&#39;, endMoving);
+};
+
+endMoving = function(e){
+    e.preventDefault();
+    $(document).off(&#39;mouseup&#39;, endMoving);
+    $(document).off(&#39;mousemove&#39;, moving);
+};</code></pre>
+<p>In the function <code>moving</code> we need to work out the new position of the top left edge of the container. This will be equal to the current position of the mouse, offset by the distance the mouse was from the top left corner when we started dragging the image.</p>
+<pre><code>moving = function(e){
+    var  mouse={};
+    e.preventDefault();
+    e.stopPropagation();
+    mouse.x = (e.clientX || e.pageX) + $(window).scrollLeft();
+    mouse.y = (e.clientY || e.pageY) + $(window).scrollTop();
+    $container.offset({
+        &#39;left&#39;: mouse.x - ( event_state.mouse_x - event_state.container_left ),
+        &#39;top&#39;: mouse.y - ( event_state.mouse_y - event_state.container_top ) 
+    });
+};</code></pre>
+</div>
+<div id="cropping-the-image" class="section level2">
+<h2>Cropping the image</h2>
+<p>Now that we can resize the image we might want to crop it as well. Rather than allowing users to crop the image to any size and shape, let’s create a frame that is the exact dimensions we require and ask users to position the image inside that frame. This gives them control over the zoom and framing, yet ensures the final image always the same size and shape.</p>
+<pre><code>&lt;div class=&quot;overlay&quot;&gt;
+    &lt;div class=&quot;overlay-inner&quot;&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;button class=&quot;btn-crop js-crop&quot;&gt;Crop&lt;/button&gt;</code></pre>
+<p>The styles for the overlay box are important, particularly it’s position, width and height as they are used to determine what part of the image is cropped. It’s also important to remember that the frame should always be visible on any background color. That is why I used a semi transparent white outline around the main box in my example.</p>
+<p>To do this we need to add a the following HTML:</p>
+<pre><code>.overlay {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -100px;
+    margin-top: -100px;
+    z-index: 999;
+    width: 200px;
+    height: 200px;
+    border: solid 2px rgba(222,60,80,.9);
+    box-sizing: content-box;
+    pointer-events: none;
+}
+
+.overlay:after,
+.overlay:before {
+    content: &#39;&#39;;
+    position: absolute;
+    display: block;
+    width: 204px;
+    height: 40px;
+    border-left: dashed 2px rgba(222,60,80,.9);
+    border-right: dashed 2px rgba(222,60,80,.9);
+}
+
+.overlay:before {
+    top: 0;
+    margin-left: -2px;
+    margin-top: -40px;
+}
+
+.overlay:after {
+    bottom: 0;
+    margin-left: -2px;
+    margin-bottom: -40px;
+}
+
+.overlay-inner:after,
+.overlay-inner:before {
+    content: &#39;&#39;;
+    position: absolute;
+    display: block;
+    width: 40px;
+    height: 204px;
+    border-top: dashed 2px rgba(222,60,80,.9);
+    border-bottom: dashed 2px rgba(222,60,80,.9);
+}
+
+.overlay-inner:before {
+    left: 0;
+    margin-left: -40px;
+    margin-top: -2px;
+}
+
+.overlay-inner:after {
+    right: 0;
+    margin-right: -40px;
+    margin-top: -2px;
+}
+
+.btn-crop {
+    position: absolute;
+    vertical-align: bottom;
+    right: 5px;
+    bottom: 5px;
+    padding: 6px 10px;
+    z-index: 999;
+    background-color: rgb(222,60,80);
+    border: none;
+    border-radius: 5px;
+    color: #FFF;
+}</code></pre>
+<p>Update the JavaScript with the following function and event listener:</p>
+<pre><code>init = function(){
+
+    //...
+
+    $(&#39;.js-crop&#39;).on(&#39;click&#39;, crop);
+  
+};
+
+crop = function(){
+    var crop_canvas,
+        left = $(&#39;.overlay&#39;).offset().left - $container.offset().left,
+        top =  $(&#39;.overlay&#39;).offset().top - $container.offset().top,
+        width = $(&#39;.overlay&#39;).width(),
+        height = $(&#39;.overlay&#39;).height();
+        
+    crop_canvas = document.createElement(&#39;canvas&#39;);
+    crop_canvas.width = width;
+    crop_canvas.height = height;
+    
+    crop_canvas.getContext(&#39;2d&#39;).drawImage(image_target, left, top, width, height, 0, 0, width, height);
+    window.open(crop_canvas.toDataURL(&quot;image/png&quot;));
+}</code></pre>
+<p>The <code>crop</code> function is similar to the <code>resizeImage</code> function however instead of passing it height and width values we get the height and width from the overlay element.</p>
+<p>For cropping, the canvas <code>drawImage</code> method requires nine parameters. The first parameter is the source image. The next four parameters indicate what part of the source image is used (the clipping box). The final four parameters indicate where on the canvas to start drawing the image and at what size.</p>
+</div>
+<div id="adding-touch-events-and-gesture-detection" class="section level2">
+<h2>Adding touch events and gesture detection</h2>
+<p>We’ve added mouse events, now let’s add support for touch enabled devices.</p>
+<p>For <code>mousedown</code> and <code>mouseup</code> there are equivalent touch events, <code>touchstart</code> and <code>touchend</code> and for <code>mousemove</code> there is the equivalent <code>touchmove</code>. Someone obviously lacks a sense of humor because these events could have easily been named “touchdown” and “touchup”.</p>
+<p>Let’s add <code>touchstart</code> and <code>touchend</code> everywhere we have a <code>mousedown</code> and <code>mouseup</code> event listener and <code>touchmove</code> everywhere we have <code>mousemove</code>.</p>
+<pre><code>// In init()...
+$container.on(&#39;mousedown touchstart&#39;, &#39;.resize-handle&#39;, startResize);
+$container.on(&#39;mousedown touchstart&#39;, &#39;img&#39;, startMoving);
+
+//In startResize() ...
+$(document).on(&#39;mousemove touchmove&#39;, moving);
+$(document).on(&#39;mouseup touchend&#39;, endMoving);
+
+//In endResize()...
+$(document).off(&#39;mouseup touchend&#39;, endMoving);
+$(document).off(&#39;mousemove touchmove&#39;, moving);
+
+//In  startMoving()...
+$(document).on(&#39;mousemove touchmove&#39;, moving);
+$(document).on(&#39;mouseup touchend&#39;, endMoving);
+
+//In endMoving()...
+$(document).off(&#39;mouseup touchend&#39;, endMoving);
+$(document).off(&#39;mousemove touchmove&#39;, moving);</code></pre>
+<p>Since we’re resizing an image it might be reasonable to expect that some users will try common gestures like pinch zoom. There is a library called <a href="http://hammerjs.github.io/">Hammer</a> that provides a lot of convenience when working with gestures. But since we only need pinch zoom, in our case, it might be a more like a sledge hammer. Let me show you how easy it is to detect pinch zoom without any library.</p>
+<p>You might have notice that in the <code>saveEventState</code> function we already stored the initial touch data; this will come in handy now.</p>
+<p>First we check if the event contains two “touches” and measure the distance between them. We note this as the initial distance and then constantly measure how much this distance changes while moving. Let’s update the <code>moving</code> function:</p>
+<pre><code>moving = function(e){
+  var  mouse={}, touches;
+  e.preventDefault();
+  e.stopPropagation();
+  
+  touches = e.originalEvent.touches;
+  mouse.x = (e.clientX || e.pageX || touches[0].clientX) + $(window).scrollLeft(); 
+  mouse.y = (e.clientY || e.pageY || touches[0].clientY) + $(window).scrollTop();
+  $container.offset({
+    &#39;left&#39;: mouse.x - ( event_state.mouse_x - event_state.container_left ),
+    &#39;top&#39;: mouse.y - ( event_state.mouse_y - event_state.container_top ) 
+  });
+  // Watch for pinch zoom gesture while moving
+  if(event_state.touches &amp;&amp; event_state.touches.length &gt; 1 &amp;&amp; touches.length &gt; 1){
+    var width = event_state.container_width, height = event_state.container_height;
+    var a = event_state.touches[0].clientX - event_state.touches[1].clientX;
+    a = a * a; 
+    var b = event_state.touches[0].clientY - event_state.touches[1].clientY;
+    b = b * b; 
+    var dist1 = Math.sqrt( a + b );
+    
+    a = e.originalEvent.touches[0].clientX - touches[1].clientX;
+    a = a * a; 
+    b = e.originalEvent.touches[0].clientY - touches[1].clientY;
+    b = b * b; 
+    var dist2 = Math.sqrt( a + b );
+
+    var ratio = dist2 /dist1;
+
+    width = width * ratio;
+    height = height * ratio;
+    // To improve performance you might limit how often resizeImage() is called
+    resizeImage(width, height);
+  }
+};</code></pre>
+<p>We divide the current distance by initial distance to get the ratio and how much to scale the image. We work out the new width and height and then resize the image.</p>
+<div class="figure">
+<img src="media/file2.jpg" />
+
+</div>
+<p>And that’s it. Take a look at <a href="http://tympanus.net/Tutorials/ImageResizeCropCanvas/">the demo</a> or <a href="http://tympanus.net/Tutorials/ImageResizeCropCanvas/ImageResizeCropCanvas.zip">download the ZIP file</a>.</p>
+<p>In my testing, Chrome prevented the default browser response for pinch zoom, which is to change the page zoom, but Firefox didn’t.</p>
+<p>I hope you found this tutorial useful. I suggest further reading on drag and drop and file upload techniques and look forward to see how people might combine these techniques to create some beautiful user interfaces.</p>
+<blockquote>
+<p><strong>Mike Riethmuller</strong></p>
+<p>https://tympanus.net/codrops/2014/10/30/resizing-cropping-images-canvas/</p>
+</blockquote>
+</div>
+</div>
+</body>
+</html>
+
+@font-face {
+  font-family: OpenSans;
+  font-style: normal;
+  font-weight: normal;
+  src:url("OpenSans-Regular.ttf");
+}
+
+@font-face {
+  font-family: OpenSans;
+  font-style: normal;
+  font-weight: bold;
+  src:url("OpenSans-Bold.ttf");
+}
+
+@font-face {
+  font-family: OpenSans;
+  font-style: normal;
+  font-weight: lighter;
+  src:url("OpenSans-Light.ttf");
+}
+
+@font-face {
+  font-family: Oswald;
+  font-style: normal;
+  font-weight: normal;
+  src:url("Oswald-Regular.ttf");
+}
+
+@font-face {
+  font-family: Oswald;
+  font-style: normal;
+  font-weight: bold;
+  src:url("Oswald-Bold.ttf");
+}
+
+@font-face {
+  font-family: Oswald;
+  font-style: normal;
+  font-weight: lighter;
+  src:url("Oswald-Light.ttf");
+}
+a {text-decoration:none;color:#237dac;}
+body {
+  margin: 1%;
+  text-align: justify;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;
+	font-size: 1.15em;
+    line-height: 1.6;
+}
+code {
+font-family: monospace;
+background-color:#edf0f3;
+padding:1%;
+color:#657580;
+ }
+ pre {
+ background-color:#edf0f3;
+padding:1%;
+white-space: pre-wrap;
+    word-break: break-word;
+    word-wrap: break-word;
+ }
+h1 { text-align: left; color: #333; }
+h2 { text-align: left; color: #555; }
+h3 { text-align: left; }
+h4 { text-align: left; }
+h5 { text-align: left; }
+h6 { text-align: left; }
+h1, h2, h3, h4, h5, h6 {
+  font-family: Oswald;
+}
+h1.title { text-align:center; }
+h2.author { text-align:center;}
+h3.date { }
+ol.toc { padding: 0; margin-left: 1em; }
+ol.toc li { list-style-type: none; margin: 0; padding: 0; }
+.figure img {
+    max-width:100%;
+    height:auto;
+}
+.figure {background-color:#eee;width:90%;margin:0 auto;}
+.caption {color:red;padding:10px;font-style:italic;}
+blockquote {
+    padding: 0 1em;
+    color: #6a737d;
+    border-left: .25em solid #dfe2e5;
+    margin-left:0;
+}
